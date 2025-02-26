@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Map"
+rootProject.name = "Map Coloring"
 include(":app")
