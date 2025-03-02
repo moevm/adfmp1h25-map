@@ -22,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -82,23 +83,37 @@ fun PageTemplate(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            Text(
-                text = header,
-                fontSize = 50.sp,
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                    fontWeight = FontWeight.Bold,
-                )
-            )
-            Spacer(modifier = Modifier.height(70.dp))
+            Box(
+                modifier = Modifier
+                    .height(180.dp)
+            ) {
+                Column {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f),
+                        text = header,
+                        fontSize = 50.sp,
+                        style = TextStyle(
+                            fontFamily = JuraFontFamily,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(40.dp))
 
-            Text(
-                text = pageDescription,
-                fontSize = 30.sp,
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                )
-            )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f),
+                        text = pageDescription,
+                        fontSize = 30.sp,
+                        style = TextStyle(
+                            fontFamily = JuraFontFamily,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
 
             Box (

@@ -22,11 +22,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.ui.focus.focusModifier
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
 
 
 @Composable
