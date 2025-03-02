@@ -12,34 +12,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-val JuraFontFamily = FontFamily(
-    Font(R.font.jura_regular, FontWeight.Normal),
-    Font(R.font.jura_bold, FontWeight.Bold)
-    // Add more font styles here if you have them
-)
-
-val commonOrangeColor = Color(0xFFF49B57)
-val commonGreenColor = Color(0xFF87BA5D)
-val commonGrayColor = Color(0xFFADADAD)
-val commonBackgroundColor = Color(0xFFD9D9D9)
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MapColoringScreen()
+            AppNavigation()
         }
     }
 }
 
 @Composable
-fun MapColoringScreen() {
+fun MapColoringScreen(navController: NavHostController) {
     Box(
         modifier = Modifier
             .background(commonBackgroundColor)
@@ -71,7 +62,9 @@ fun MapColoringScreen() {
             )
             Spacer(modifier = Modifier.height(20.dp))
 
-            CommonButton("Easy", commonOrangeColor, onClick = { /* TODO:*/ })
+            CommonButton("Easy", commonOrangeColor, onClick = {
+                navController.navigate("coloring")
+            })
             CommonButton("Medium", commonOrangeColor, onClick = { /* TODO:*/ })
             CommonButton("Hard", commonOrangeColor, onClick = { /* TODO:*/ })
 
@@ -85,25 +78,11 @@ fun MapColoringScreen() {
 }
 
 @Composable
-fun CommonButton(text: String, color: Color, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(color),
-        shape = RoundedCornerShape(20.dp),
-        modifier = Modifier
-            .fillMaxWidth(0.7f)
-            .padding(vertical = 5.dp)
-            .height(80.dp)
-    ) {
-        Text(
-            text = text,
-            fontSize = 30.sp,
-            color = Color.Black,
-            style = TextStyle(
-                fontFamily = JuraFontFamily,
-                fontWeight = FontWeight.Bold,
-            )
+fun AppNavigation() {
+    val navController = rememberNavController()
 
-        )
+    NavHost(navController = navController, startDestination = "menu") {
+        composable("menu") { MapColoringScreen(navController) }
+        composable("coloring") { ColoringScreen() }
     }
 }
