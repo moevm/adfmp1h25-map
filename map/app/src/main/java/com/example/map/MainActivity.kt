@@ -31,48 +31,23 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MapColoringScreen(navController: NavHostController) {
-    Box(
-        modifier = Modifier
-            .background(commonBackgroundColor)
-    )
-    {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .offset(y = (90).dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
-        ) {
-            Text(
-                text = "Map Coloring",
-                fontSize = 50.sp,
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                    fontWeight = FontWeight.Bold,
-                )
-            )
-            Spacer(modifier = Modifier.height(70.dp))
-
-            Text(
-                text = "Choose level difficulty:",
-                fontSize = 30.sp,
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                )
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-
+    PageTemplate(
+        header = "Map Coloring",
+        pageDescription = "Choose level difficulty:",
+        buttonDescription = "Statistics",
+        buttonColor = commonGrayColor,
+        buttonAction = { /* TODO:*/ },
+    ) {
+        Column(){
             CommonButton("Easy", commonOrangeColor, onClick = {
                 navController.navigate("coloring")
             })
             CommonButton("Medium", commonOrangeColor, onClick = { /* TODO:*/ })
             CommonButton("Hard", commonOrangeColor, onClick = { /* TODO:*/ })
 
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.height(180.dp))
 
             CommonButton("Custom", commonGreenColor, onClick = { /* TODO:*/ })
-            CommonButton("Statistics", commonGrayColor, onClick = { /* TODO:*/ })
-
         }
     }
 }

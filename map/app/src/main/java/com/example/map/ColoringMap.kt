@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.ui.focus.focusModifier
 
 
 @Composable
@@ -38,51 +39,35 @@ fun ColoringScreen() {
             time++
         }
     }
-    Box(
-        modifier = Modifier
-            .background(commonBackgroundColor)
-    )
-    {
+
+    PageTemplate(
+        header = "Hard",
+        pageDescription = "4 colors",
+        buttonDescription = "Pause",
+        buttonColor = commonGreenColor,
+        buttonAction = { /* TODO:*/ },
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .offset(y = (90).dp),
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Hard",
-                fontSize = 50.sp,
-                modifier = Modifier.padding(bottom = 10.dp),
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                    fontWeight = FontWeight.Bold,
-                )
-            )
-            Text(
-                text = "4 colors",
-                fontSize = 30.sp,
-                modifier = Modifier.padding(bottom = 10.dp),
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                    fontWeight = FontWeight.Bold,
-                )
-            )
+        ){
             Box(
                 modifier = Modifier
-                    .size(400.dp)
+                    .background(color = Color.White)
+                    .border(BorderStroke(1.dp, Color.Black))
             ) {
                 ColoringMap(
                     selectedColor,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .border(BorderStroke(1.dp, Color.Black))
                 )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
+
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
+
             ) {
                 RoundButton(
                     imageResId = R.drawable.bulb_icon,
@@ -107,10 +92,6 @@ fun ColoringScreen() {
                     fontWeight = FontWeight.Bold,
                 )
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            CommonButton("Pause", commonGreenColor, onClick = { /* TODO:*/ })
         }
     }
 }
