@@ -67,6 +67,7 @@ fun PageTemplate(
     pageDescription: String,
     buttonDescription: String,
     buttonColor: Color,
+    visibleButton: Boolean=true,
     buttonAction: () -> Unit,
     content: @Composable() () -> Unit) {
     Box(
@@ -107,7 +108,9 @@ fun PageTemplate(
                 content()
             }
 
-            CommonButton(buttonDescription, buttonColor, onClick = buttonAction)
+            if (visibleButton) {
+                CommonButton(buttonDescription, buttonColor, onClick = buttonAction)
+            }
         }
     }
 }

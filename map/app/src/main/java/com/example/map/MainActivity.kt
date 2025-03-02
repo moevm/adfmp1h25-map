@@ -58,6 +58,6 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") { MapColoringScreen(navController) }
-        composable("coloring") { ColoringScreen() }
+        composable("coloring") { ColoringScreen(navController) }
     }
 }

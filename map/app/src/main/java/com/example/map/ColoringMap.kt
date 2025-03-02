@@ -26,15 +26,17 @@ import kotlinx.coroutines.delay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.ui.focus.focusModifier
+import androidx.navigation.NavHostController
 
 
 @Composable
-fun ColoringScreen() {
+fun ColoringScreen(navController: NavHostController) {
     var selectedColor by remember { mutableStateOf(Color.Yellow) }
     var time by remember { mutableIntStateOf(0) }
+    var isPaused by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
+    LaunchedEffect(isPaused) {
+        while (!isPaused) {
             delay(1000L)
             time++
         }
@@ -45,11 +47,15 @@ fun ColoringScreen() {
         pageDescription = "4 colors",
         buttonDescription = "Pause",
         buttonColor = commonGreenColor,
-        buttonAction = { /* TODO:*/ },
+        visibleButton = !isPaused,
+        buttonAction = {
+            isPaused = true
+        },
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ){
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
             Box(
                 modifier = Modifier
                     .background(color = Color.White)
@@ -65,9 +71,7 @@ fun ColoringScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(
-
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
-
             ) {
                 RoundButton(
                     imageResId = R.drawable.bulb_icon,
@@ -81,7 +85,6 @@ fun ColoringScreen() {
                 )
             }
 
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
@@ -92,6 +95,25 @@ fun ColoringScreen() {
                     fontWeight = FontWeight.Bold,
                 )
             )
+        }
+
+        if (isPaused) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(commonBackgroundColor)
+                    .clickable { }
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CommonButton("Resume", commonGrayColor, onClick = { isPaused = false })
+                    CommonButton("Menu", commonGrayColor, onClick = { navController.navigate("menu") })
+                }
+            }
         }
     }
 }
