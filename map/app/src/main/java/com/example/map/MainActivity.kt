@@ -9,9 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,10 +35,14 @@ fun MapColoringScreen(navController: NavHostController) {
     ) {
         Column(){
             CommonButton("Easy", commonOrangeColor, onClick = {
-                navController.navigate("coloring")
+                navController.navigate("coloring/Easy")
             })
-            CommonButton("Medium", commonOrangeColor, onClick = { /* TODO:*/ })
-            CommonButton("Hard", commonOrangeColor, onClick = { /* TODO:*/ })
+            CommonButton("Medium", commonOrangeColor, onClick = {
+                navController.navigate("coloring/Medium")
+            })
+            CommonButton("Hard", commonOrangeColor, onClick = {
+                navController.navigate("coloring/Hard")
+            })
 
             Spacer(modifier = Modifier.height(180.dp))
 
@@ -54,7 +60,15 @@ fun AppNavigation() {
 
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") { MapColoringScreen(navController) }
-        composable("coloring") { ColoringScreen(navController) }
+        composable(
+            route = "coloring/{difficulty}",
+            arguments = listOf(
+                navArgument("difficulty") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val difficulty = backStackEntry.arguments?.getString("difficulty") ?: "Unknown"
+            ColoringScreen(navController, difficulty)
+        }
         composable("custom") { CustomScreen(navController, context) }
         composable("statistics") { StatisticsScreen(navController, context) }
     }

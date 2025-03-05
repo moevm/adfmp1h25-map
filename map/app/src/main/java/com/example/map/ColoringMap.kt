@@ -29,7 +29,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun ColoringScreen(navController: NavHostController) {
+fun ColoringScreen(navController: NavHostController, difficulty: String) {
     var selectedColor by remember { mutableStateOf(Color.Yellow) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
@@ -42,7 +42,7 @@ fun ColoringScreen(navController: NavHostController) {
     }
 
     PageTemplate(
-        header = "Hard",
+        header = difficulty,
         pageDescription = "4 colors",
         buttonDescription = "Pause",
         buttonColor = commonGreenColor,
