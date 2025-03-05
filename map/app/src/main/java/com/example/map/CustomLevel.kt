@@ -1,5 +1,6 @@
 package com.example.map
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -12,41 +13,62 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.navigation.NavHostController
-import kotlin.random.Random
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
-fun CustomScreen(navController: NavHostController) {
-    val polygonsList = listOf<String>(
-        "10", "15",
-        "25", "35",
-        "50", "75"
-    )
-    val count: Int = polygonsList.size
-    val randomIndex = Random.nextInt(count)
-    val currentConfigVal = polygonsList[randomIndex]
+fun CustomScreen(navController: NavHostController, context: Context) {
+    val polygonsList = listOf("10", "15", "25", "35", "50", "75")
+    val count = polygonsList.size
+
+    var currentConfigVal by remember { mutableStateOf("10") }
+
+    // Загружаем данные из DataStore
+    LaunchedEffect(Unit) {
+        currentConfigVal = SettingsDataStore.getSelectedPolygon(context)
+    }
 
     PageTemplate(
         header = "Custom",
         pageDescription = "Choose number of polygons:",
         buttonDescription = "Menu",
         buttonColor = commonGrayColor,
-        buttonAction = {
-            navController.navigate("menu")
-        },
+        buttonAction = { navController.navigate("menu") },
     ) {
         Column {
-            for (i in 0..<(count / 2)) {
+            for (i in 0 until (count / 2)) {
                 Row {
                     val value1 = polygonsList[i * 2]
                     val value2 = polygonsList[i * 2 + 1]
                     val isChosen1 = (value1 == currentConfigVal)
                     val isChosen2 = (value2 == currentConfigVal)
-                    PolygonCountButton(value1, commonOrangeColor, isChosen1, { saveToConf(navController, value1) })
+
+                    PolygonCountButton(value1, commonOrangeColor, isChosen1) {
+                        saveToConf(navController, context, value1) { newValue ->
+                            currentConfigVal = newValue
+                        }
+                    }
                     Spacer(modifier = Modifier.width(30.dp))
-                    PolygonCountButton(value2, commonOrangeColor, isChosen2, { saveToConf(navController, value1) })
+                    PolygonCountButton(value2, commonOrangeColor, isChosen2) {
+                        saveToConf(navController, context, value2) { newValue ->
+                            currentConfigVal = newValue
+                        }
+                    }
                 }
             }
+        }
+    }
+}
+
+fun saveToConf(navController: NavHostController, context: Context, value: String, onSaved: (String) -> Unit) {
+    CoroutineScope(Dispatchers.IO).launch {
+        SettingsDataStore.saveSelectedPolygon(context, value)
+        withContext(Dispatchers.Main) {
+            onSaved(value)
+            navController.navigate("custom")
         }
     }
 }
@@ -79,8 +101,4 @@ fun PolygonCountButton(text: String, color: Color, isChosen: Boolean, onClick: (
 
         )
     }
-}
-
-fun saveToConf(navController: NavHostController, value: String) {
-    navController.navigate("custom")
 }

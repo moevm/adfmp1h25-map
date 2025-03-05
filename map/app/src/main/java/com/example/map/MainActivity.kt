@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -49,10 +50,11 @@ fun MapColoringScreen(navController: NavHostController) {
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     NavHost(navController = navController, startDestination = "menu") {
         composable("menu") { MapColoringScreen(navController) }
         composable("coloring") { ColoringScreen(navController) }
-        composable("custom") { CustomScreen(navController) }
+        composable("custom") { CustomScreen(navController, context) }
     }
 }
