@@ -29,7 +29,7 @@ fun MapColoringScreen(navController: NavHostController) {
         pageDescription = "Choose level difficulty:",
         buttonDescription = "Statistics",
         buttonColor = commonGrayColor,
-        buttonAction = { /* TODO:*/ },
+        buttonAction = { navController.navigate("statistics") },
     ) {
         Column(){
             CommonButton("Easy", commonOrangeColor, onClick = {
@@ -56,5 +56,6 @@ fun AppNavigation() {
         composable("menu") { MapColoringScreen(navController) }
         composable("coloring") { ColoringScreen(navController) }
         composable("custom") { CustomScreen(navController, context) }
+        composable("statistics") { StatisticsScreen(navController, context) }
     }
 }

@@ -26,7 +26,6 @@ fun CustomScreen(navController: NavHostController, context: Context) {
 
     var currentConfigVal by remember { mutableStateOf("10") }
 
-    // Загружаем данные из DataStore
     LaunchedEffect(Unit) {
         currentConfigVal = SettingsDataStore.getSelectedPolygon(context)
     }
