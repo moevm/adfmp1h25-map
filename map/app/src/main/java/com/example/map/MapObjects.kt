@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 
 data class Polygon(val id: String, val points: List<Pair<Double, Double>>, var color: Color = commonWhite) {
 
-    fun updateColor(newColor: Color): Unit {
+    fun updateColor(newColor: Color) {
         color = newColor
     }
 }
@@ -13,7 +13,7 @@ class ColoringMap {
 
     private val polygons: MutableMap<String, Polygon> = mutableMapOf()
 
-    fun addPolygon(polygon: Polygon): Unit {
+    fun addPolygon(polygon: Polygon) {
         polygons[polygon.id] = polygon
     }
 
