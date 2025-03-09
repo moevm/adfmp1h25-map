@@ -6,6 +6,6 @@ class Polygon(color: Color = commonWhite) {
 
 }
 
-class Map() {
+class ColoringMap() {
 
 }
