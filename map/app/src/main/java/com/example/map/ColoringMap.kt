@@ -30,7 +30,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun ColoringScreen(navController: NavHostController, difficulty: String) {
-    var selectedColor by remember { mutableStateOf(Color.Yellow) }
+    var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
 
@@ -43,7 +43,7 @@ fun ColoringScreen(navController: NavHostController, difficulty: String) {
 
     PageTemplate(
         header = difficulty,
-        pageDescription = "4 colors",
+        pageDescription = "${getColorCount(difficulty)} colors",
         buttonDescription = "Pause",
         buttonColor = commonGreenColor,
         visibleButton = !isPaused,
@@ -79,7 +79,7 @@ fun ColoringScreen(navController: NavHostController, difficulty: String) {
                 )
                 RoundButton(
                     imageResId = R.drawable.brush_icon,
-                    buttonColor = Color.LightGray,
+                    buttonColor = selectedColor,
                     onClick = { }
                 )
             }
@@ -172,4 +172,13 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier) {
             )
         }
     }
+}
+
+
+fun getColorCount(difficulty: String): Int? {
+    return mapOf(
+        "Hard" to 4,
+        "Medium" to 5,
+        "Easy" to 6
+    )[difficulty]
 }

@@ -39,6 +39,14 @@ val commonBackgroundColor = Color(0xFFD9D9D9)
 val commonWhite = Color(0xFFFFFFFF)
 
 
+val gameGreenColor = Color(0xFF4CAF50)
+val gameBlueColor = Color(0xFF2196F3)
+val gameRedColor = Color(0xFFF44336)
+val gameYellowColor = Color(0xFFFFC107)
+val gameTurquoiseColor = Color(0xFF009688)
+val gamePinkColor = Color(0xFFDA36B5)
+
+
 @Composable
 fun CommonButton(text: String, color: Color, onClick: () -> Unit) {
     Button(

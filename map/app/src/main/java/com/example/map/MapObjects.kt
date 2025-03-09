@@ -10,6 +10,7 @@ data class Polygon(val id: String, val points: List<Pair<Double, Double>>, var c
 }
 
 class ColoringMap {
+
     private val polygons: MutableMap<String, Polygon> = mutableMapOf()
 
     fun addPolygon(polygon: Polygon): Unit {
