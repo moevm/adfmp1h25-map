@@ -80,7 +80,7 @@ fun StatisticsTable(statistics: Map<String, Pair<Int, String>>) {
             ) {
                 Text(
                     difficulty,
-                    fontSize = 22.sp,
+                    fontSize = 20.sp,
                     modifier = Modifier.width(100.dp),
                     style = TextStyle(
                         fontFamily = JuraFontFamily,
@@ -90,16 +90,17 @@ fun StatisticsTable(statistics: Map<String, Pair<Int, String>>) {
                 )
                 Text(
                     data.first.toString(),
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     modifier = Modifier.width(90.dp),
                     style = TextStyle(
                         fontFamily = JuraFontFamily,
+                        fontWeight = FontWeight.Bold,
                     ),
                     textAlign = TextAlign.Center
                 )
                 Text(
                     data.second,
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     modifier = Modifier.width(110.dp),
                     style = TextStyle(
                         fontFamily = JuraFontFamily,

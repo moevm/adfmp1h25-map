@@ -36,6 +36,7 @@ val commonOrangeColor = Color(0xFFF49B57)
 val commonGreenColor = Color(0xFF87BA5D)
 val commonGrayColor = Color(0xFFADADAD)
 val commonBackgroundColor = Color(0xFFD9D9D9)
+val commonWhite = Color(0xFFFFFFFF)
 
 
 @Composable

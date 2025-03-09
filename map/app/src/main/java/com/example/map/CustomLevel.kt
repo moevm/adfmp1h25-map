@@ -24,7 +24,7 @@ fun CustomScreen(navController: NavHostController, context: Context) {
     val polygonsList = listOf("10", "15", "25", "35", "50", "75")
     val count = polygonsList.size
 
-    var currentConfigVal by remember { mutableStateOf("10") }
+    var currentConfigVal by remember { mutableStateOf("0") }
 
     LaunchedEffect(Unit) {
         currentConfigVal = SettingsDataStore.getSelectedPolygon(context)
