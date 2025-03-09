@@ -11,15 +11,16 @@ private val Context.dataStore by preferencesDataStore("settings")
 object SettingsDataStore {
     private val SELECTED_POLYGON = stringPreferencesKey("selectedPolygon")
 
-    suspend fun saveSelectedPolygon(context: Context, value: String) {
+    suspend fun saveSelectedPolygon(context: Context, value: Int) {
         context.dataStore.edit { settings ->
-            settings[SELECTED_POLYGON] = value
+            settings[SELECTED_POLYGON] = value.toString()
         }
     }
 
-    suspend fun getSelectedPolygon(context: Context): String {
+    suspend fun getSelectedPolygon(context: Context): Int {
         return context.dataStore.data
             .map { it[SELECTED_POLYGON] ?: "10" }
             .first()
+            .toInt()
     }
 }

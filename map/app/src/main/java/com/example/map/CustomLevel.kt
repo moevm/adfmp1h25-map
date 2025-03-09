@@ -21,10 +21,10 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CustomScreen(navController: NavHostController, context: Context) {
-    val polygonsList = listOf("10", "15", "25", "35", "50", "75")
+    val polygonsList = listOf(10, 15, 25, 35, 50, 75)
     val count = polygonsList.size
 
-    var currentConfigVal by remember { mutableStateOf("0") }
+    var currentConfigVal by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(Unit) {
         currentConfigVal = SettingsDataStore.getSelectedPolygon(context)
@@ -45,13 +45,13 @@ fun CustomScreen(navController: NavHostController, context: Context) {
                     val isChosen1 = (value1 == currentConfigVal)
                     val isChosen2 = (value2 == currentConfigVal)
 
-                    PolygonCountButton(value1, commonOrangeColor, isChosen1) {
+                    PolygonCountButton(value1.toString(), commonOrangeColor, isChosen1) {
                         saveToConf(navController, context, value1) { newValue ->
                             currentConfigVal = newValue
                         }
                     }
                     Spacer(modifier = Modifier.width(30.dp))
-                    PolygonCountButton(value2, commonOrangeColor, isChosen2) {
+                    PolygonCountButton(value2.toString(), commonOrangeColor, isChosen2) {
                         saveToConf(navController, context, value2) { newValue ->
                             currentConfigVal = newValue
                         }
@@ -62,7 +62,7 @@ fun CustomScreen(navController: NavHostController, context: Context) {
     }
 }
 
-fun saveToConf(navController: NavHostController, context: Context, value: String, onSaved: (String) -> Unit) {
+fun saveToConf(navController: NavHostController, context: Context, value: Int, onSaved: (Int) -> Unit) {
     CoroutineScope(Dispatchers.IO).launch {
         SettingsDataStore.saveSelectedPolygon(context, value)
         withContext(Dispatchers.Main) {
