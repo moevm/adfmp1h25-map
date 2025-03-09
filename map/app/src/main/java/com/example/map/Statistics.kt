@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
+import kotlin.collections.Map
 
 @Composable
 fun StatisticsScreen(navController: NavHostController, context: Context) {

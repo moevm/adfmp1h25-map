@@ -1,5 +1,6 @@
 package com.example.map
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -67,7 +68,7 @@ fun AppNavigation() {
             )
         ) { backStackEntry ->
             val difficulty = backStackEntry.arguments?.getString("difficulty") ?: "Unknown"
-            ColoringScreen(navController, difficulty)
+            ColoringScreen(navController, difficulty, context)
         }
         composable("custom") { CustomScreen(navController, context) }
         composable("statistics") { StatisticsScreen(navController, context) }

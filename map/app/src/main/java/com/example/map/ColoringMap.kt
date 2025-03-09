@@ -1,5 +1,6 @@
 package com.example.map
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -29,7 +30,7 @@ import kotlinx.coroutines.delay
 
 
 @Composable
-fun ColoringScreen(navController: NavHostController, difficulty: String) {
+fun ColoringScreen(navController: NavHostController, difficulty: String, context: Context) {
     var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
