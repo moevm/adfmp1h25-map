@@ -1,7 +1,7 @@
 package com.example.map
 import androidx.compose.ui.graphics.Color
 
-data class Polygon(val id: String, val points: List<Pair<Int, Int>>, var color: Color = commonWhite) {
+data class Polygon(val id: String, val points: List<Pair<Double, Double>>, var color: Color = commonWhite) {
 
     fun updateColor(newColor: Color) {
         color = newColor
@@ -13,7 +13,7 @@ class MapPolygons(polygonCount: Int) {
     private val polygons: MutableMap<String, Polygon> = mutableMapOf()
 
     init {
-        generateGridMap(350, 350, polygonCount)
+        generateGridMap(polygonCount)
     }
 
     fun addPolygon(polygon: Polygon) {
@@ -32,7 +32,7 @@ class MapPolygons(polygonCount: Int) {
         polygons[id]?.updateColor(color)
     }
 
-    private fun generateGridMap(width: Int, height: Int, polygonCount: Int) {
+    private fun generateGridMap(polygonCount: Int, width: Double = 350.00, height: Double = 350.00) {
         val columns = kotlin.math.sqrt(polygonCount.toDouble()).toInt()
         val rows = (polygonCount + columns - 1) / columns
         val cellWidth = width / columns
