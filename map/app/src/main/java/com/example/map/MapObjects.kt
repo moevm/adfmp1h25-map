@@ -1,5 +1,6 @@
 package com.example.map
 import androidx.compose.ui.graphics.Color
+import kotlin.random.Random
 
 data class Square(
     var id: Int,
@@ -9,7 +10,8 @@ data class Square(
 
 data class Polygon(
     var squares: List<Square>,
-    var color: Color? = commonWhite,
+    var color: Int = 0,
+//    val neighbors: Set<Polygon>,
     var border: List<List<Pair<Int, Int>>> = listOf()
 ) {
     init {
@@ -64,31 +66,55 @@ data class Polygon(
         border = borders
     }
 
-    fun updateColor(newColor: Color) {
+    fun updateColor(newColor: Int) {
         color = newColor
     }
 }
 
-class MapPolygons(polygonCount: Int) {
+class MapPolygons(polygonCount: Int, colorCount: Int) {
     private var polygons: List<Polygon> = mutableListOf()
 
     init {
-        generateGridMap(polygonCount)
+        generateGridMap(polygonCount, colorCount)
     }
 
     fun getPolygons(): List<Polygon> {
         return polygons
     }
 
-    private fun generateGridMap(polygonCount: Int) {
+    private fun generateGridMap(polygonCount: Int, colorCount: Int) {
         var squares = generateSquares()
+        var squaresGroups: MutableList<List<Square>> = mutableListOf()
 
-        // divide into groups for polygons
+        val randomIndices: List<Int> = (0..99)
+            .filter { it !in 0..10 && it !in 90..100 && it % 10 != 0 && it % 10 != 9 }
+            .shuffled()
 
-        polygons = polygonsFromSquareGroups(squares.map { it -> listOf(it) })
+        val directions: List<Int> = listOf(-1, 1, 10, -10)
+
+        for (i in 0 .. (100 - polygonCount)){
+            val randomIndex = randomIndices.last()
+            randomIndices.dropLast(1)
+            val direction = directions.random()
+
+            val square1 = squares.find { it.id == randomIndex }
+            val square2 = squares.find { it.id == randomIndex + direction }
+
+            if (square1 != null && square2 != null) {
+                println(square1.id)
+                println(square2.id)
+                squares.removeIf { it.id == randomIndex }
+                squares.removeIf { it.id == randomIndex + direction }
+                squaresGroups.add(mutableListOf(square1, square2))
+            }
+        }
+
+        val combinedSquares = squaresGroups + squares.map { listOf(it) }
+        polygons = polygonsFromSquareGroups(combinedSquares)
+
     }
 
-    private fun generateSquares(): List<Square> {
+    private fun generateSquares(): MutableList<Square> {
         val squares = mutableListOf<Square>()
 
         for (x in 0..9) {
@@ -111,6 +137,10 @@ class MapPolygons(polygonCount: Int) {
         val polygons = mutableListOf<Polygon>()
 
         for (squareSet in squares) {
+            squareSet.forEach { square ->
+                println("Square ID: ${square.id}, x: ${square.xRelative}, y: ${square.yRelative}")
+            }
+            println("_____________")
             polygons.add(
                 Polygon(squareSet)
             )

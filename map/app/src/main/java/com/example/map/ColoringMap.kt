@@ -35,6 +35,8 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
     var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
+    var mapPolygons = remember { MapPolygons(75, 4) }
+
 
     LaunchedEffect(isPaused) {
         while (!isPaused) {
@@ -65,7 +67,8 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                 ColoringMap(
                     selectedColor,
                     modifier = Modifier
-                        .align(Alignment.Center)
+                        .align(Alignment.Center),
+                    mapPolygons
                 )
             }
 
@@ -138,7 +141,7 @@ fun RoundButton(imageResId: Int, buttonColor: Color, onClick: () -> Unit) {
 }
 
 @Composable
-fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier) {
+fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier, mapPolygons: MapPolygons) {
     var regionColors by remember { mutableStateOf(List(10) { Color.White }) }
 
     val density = LocalDensity.current
@@ -153,16 +156,15 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier) {
             }
     ) {
 
-        var mapPolygons = MapPolygons(10)
 
-        val mapSizePx = with(density) { 350.dp.toPx() } // Переводим 350dp в пиксели
+        val mapSizePx = with(density) { 350.dp.toPx() }
         val squareLen = mapSizePx/10
 
         for (polygon in mapPolygons.getPolygons()) {
-            val polygonColor = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+//            val polygonColor = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
             for (square in polygon.squares) {
                 drawRect(
-                    color = polygonColor,
+                    color = gameColorsMap[polygon.color] ?: commonWhite,
                     size = Size( width = squareLen, height = squareLen),
                     topLeft = Offset(
                         squareLen * square.xRelative,

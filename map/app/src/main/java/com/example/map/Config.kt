@@ -46,6 +46,16 @@ val gameYellowColor = Color(0xFFFFC107)
 val gameTurquoiseColor = Color(0xFF009688)
 val gamePinkColor = Color(0xFFDA36B5)
 
+val gameColorsMap = mapOf(
+    Pair(0, commonWhite),
+    Pair(1, gameBlueColor),
+    Pair(2, gameRedColor),
+    Pair(3, gameYellowColor),
+    Pair(4, gameTurquoiseColor),
+    Pair(5, gamePinkColor),
+    Pair(6, gameGreenColor),
+)
+
 
 @Composable
 fun CommonButton(text: String, color: Color, onClick: () -> Unit) {
