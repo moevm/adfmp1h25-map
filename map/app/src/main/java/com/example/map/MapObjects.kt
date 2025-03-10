@@ -86,7 +86,7 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
         var squares = generateSquares()
         var squaresGroups: MutableList<List<Square>> = mutableListOf()
 
-        val randomIndices: List<Int> = (0..99)
+        var randomIndices: List<Int> = (0..99)
             .filter { it !in 0..10 && it !in 90..100 && it % 10 != 0 && it % 10 != 9 }
             .shuffled()
 
@@ -94,8 +94,11 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
 
         for (i in 0 .. (100 - polygonCount)){
             val randomIndex = randomIndices.last()
-            randomIndices.dropLast(1)
+            randomIndices = randomIndices.dropLast(1).toMutableList()
             val direction = directions.random()
+
+            println(randomIndex)
+            println(direction)
 
             val square1 = squares.find { it.id == randomIndex }
             val square2 = squares.find { it.id == randomIndex + direction }
