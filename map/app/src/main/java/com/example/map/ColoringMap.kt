@@ -3,7 +3,9 @@ package com.example.map
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -12,21 +14,20 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 
 @Composable
@@ -140,6 +141,8 @@ fun RoundButton(imageResId: Int, buttonColor: Color, onClick: () -> Unit) {
 fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier) {
     var regionColors by remember { mutableStateOf(List(10) { Color.White }) }
 
+    val density = LocalDensity.current
+
     Canvas(
         modifier = modifier
             .width(350.dp)
@@ -149,28 +152,39 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier) {
                 regionColors = regionColors.map { selectedColor }
             }
     ) {
-        val regions = listOf(
-            listOf(Offset(30f, 30f), Offset(90f, 30f), Offset(60f, 90f)),
-            listOf(Offset(120f, 30f), Offset(180f, 30f), Offset(150f, 90f)),
-            listOf(Offset(60f, 90f), Offset(120f, 90f), Offset(90f, 150f))
-        )
 
-        regions.forEachIndexed { index, points ->
-            val path = Path().apply {
-                moveTo(points.first().x, points.first().y)
-                points.drop(1).forEach { lineTo(it.x, it.y) }
-                close()
+        var mapPolygons = MapPolygons(10)
+
+        val mapSizePx = with(density) { 350.dp.toPx() } // Переводим 350dp в пиксели
+        val squareLen = mapSizePx/10
+
+        for (polygon in mapPolygons.getPolygons()) {
+            val polygonColor = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+            for (square in polygon.squares) {
+                drawRect(
+                    color = polygonColor,
+                    size = Size( width = squareLen, height = squareLen),
+                    topLeft = Offset(
+                        squareLen * square.xRelative,
+                        squareLen * square.yRelative
+                    )
+                )
             }
-            drawPath(
-                path = path,
-                color = regionColors[index],
-                style = Fill
-            )
-            drawPath(
-                path = path,
-                color = Color.Black,
-                style = Stroke(width = 3f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-            )
+
+            for (line in polygon.border) {
+                drawLine(
+                    color = Color.Black,
+                    start = Offset(
+                        squareLen * line[0].first,
+                        squareLen * line[0].second
+                    ),
+                    end = Offset(
+                        squareLen * line[1].first,
+                        squareLen * line[1].second
+                    ),
+                    strokeWidth = 5f
+                )
+            }
         }
     }
 }

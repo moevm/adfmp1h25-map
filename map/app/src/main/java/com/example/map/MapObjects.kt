@@ -1,7 +1,68 @@
 package com.example.map
 import androidx.compose.ui.graphics.Color
 
-data class Polygon(val id: String, val points: List<Pair<Double, Double>>, var color: Color = commonWhite) {
+data class Square(
+    var id: Int,
+    var xRelative: Int,
+    var yRelative: Int
+)
+
+data class Polygon(
+    var squares: List<Square>,
+    var color: Color? = commonWhite,
+    var border: List<List<Pair<Int, Int>>> = listOf()
+) {
+    init {
+        val squareIdSet = mutableSetOf<Int>()
+
+        for (square in squares){
+            squareIdSet.add(square.id)
+        }
+
+        val borders = mutableListOf<List<Pair<Int, Int>>>()
+
+        for (square in squares){
+            val current = square.id
+
+            if (!squareIdSet.contains(current - 1)){
+                borders.add(
+                    listOf(
+                        Pair(square.xRelative, square.yRelative),
+                        Pair(square.xRelative, square.yRelative + 1),
+                        )
+                )
+            }
+
+            if (!squareIdSet.contains(current + 1)){
+                borders.add(
+                    listOf(
+                        Pair(square.xRelative + 1, square.yRelative),
+                        Pair(square.xRelative + 1, square.yRelative + 1),
+                    )
+                )
+            }
+
+            if (!squareIdSet.contains(current - 10)){
+                borders.add(
+                    listOf(
+                        Pair(square.xRelative, square.yRelative),
+                        Pair(square.xRelative + 1, square.yRelative),
+                    )
+                )
+            }
+
+            if (!squareIdSet.contains(current + 10)){
+                borders.add(
+                    listOf(
+                        Pair(square.xRelative, square.yRelative + 1),
+                        Pair(square.xRelative + 1, square.yRelative + 1),
+                    )
+                )
+            }
+        }
+
+        border = borders
+    }
 
     fun updateColor(newColor: Color) {
         color = newColor
@@ -9,52 +70,52 @@ data class Polygon(val id: String, val points: List<Pair<Double, Double>>, var c
 }
 
 class MapPolygons(polygonCount: Int) {
-
-    private val polygons: MutableMap<String, Polygon> = mutableMapOf()
+    private var polygons: List<Polygon> = mutableListOf()
 
     init {
         generateGridMap(polygonCount)
     }
 
-    fun addPolygon(polygon: Polygon) {
-        polygons[polygon.id] = polygon
+    fun getPolygons(): List<Polygon> {
+        return polygons
     }
 
-    fun removePolygon(id: String) {
-        polygons.remove(id)
+    private fun generateGridMap(polygonCount: Int) {
+        var squares = generateSquares()
+
+        // divide into groups for polygons
+
+        polygons = polygonsFromSquareGroups(squares.map { it -> listOf(it) })
     }
 
-    fun getPolygon(id: String): Polygon? {
-        return polygons[id]
-    }
+    private fun generateSquares(): List<Square> {
+        val squares = mutableListOf<Square>()
 
-    fun updatePolygonColor(id: String, color: Color) {
-        polygons[id]?.updateColor(color)
-    }
-
-    private fun generateGridMap(polygonCount: Int, width: Double = 350.00, height: Double = 350.00) {
-        val columns = kotlin.math.sqrt(polygonCount.toDouble()).toInt()
-        val rows = (polygonCount + columns - 1) / columns
-        val cellWidth = width / columns
-        val cellHeight = height / rows
-
-        for (row in 0 until rows) {
-            for (col in 0 until columns) {
-                if (polygons.size >= polygonCount) return
-                val x1 = col * cellWidth
-                val y1 = row * cellHeight
-                val x2 = x1 + cellWidth
-                val y2 = y1 + cellHeight
-                val points = listOf(
-                    x1 to y1,
-                    x2 to y1,
-                    x2 to y2,
-                    x1 to y2
+        for (x in 0..9) {
+            for (y in 0..9) {
+                squares.add(
+                    Square(
+                        id = x + 10*y,
+                        xRelative = x,
+                        yRelative = y
                 )
-                val polygon = Polygon(id = "${row * columns + col}", points = points)
-                addPolygon(polygon)
+                )
+
             }
         }
+
+        return squares
     }
 
+    private fun polygonsFromSquareGroups(squares: List<List<Square>>): List<Polygon> {
+        val polygons = mutableListOf<Polygon>()
+
+        for (squareSet in squares) {
+            polygons.add(
+                Polygon(squareSet)
+            )
+        }
+
+        return polygons
+    }
 }
