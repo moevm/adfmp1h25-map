@@ -77,35 +77,54 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                     CommonButton("Menu", commonGrayColor, onClick = { navController.navigate("menu") })
                 }
             }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "%02d:%02d".format(time / 60, time % 60),
-                fontSize = 30.sp,
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                    fontWeight = FontWeight.Bold,
-                )
-            )
-        }
-
-        if (isPaused) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(commonBackgroundColor)
-                    .clickable { }
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Column(
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .background(color = Color.White)
+                        .border(BorderStroke(1.dp, Color.Black))
                 ) {
-                    CommonButton("Resume", commonGrayColor, onClick = { isPaused = false })
-                    CommonButton("Menu", commonGrayColor, onClick = { navController.navigate("menu") })
+                    ColoringMap(
+                        selectedColor,
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        mapPolygons
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    RoundButton(
+                        imageResId = R.drawable.bulb_icon,
+                        buttonColor = Color.Yellow,
+                        onClick = {
+                            mapPolygons.hintColoring()
+                            time += 10
+                        }
+                    )
+                    RoundButton(
+                        imageResId = R.drawable.brush_icon,
+                        buttonColor = selectedColor,
+                        onClick = { }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "%02d:%02d".format(time / 60, time % 60),
+                    fontSize = 30.sp,
+                    style = TextStyle(
+                        fontFamily = JuraFontFamily,
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
             }
         }
     }
