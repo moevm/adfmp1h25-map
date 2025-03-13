@@ -118,6 +118,72 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
         }
     }
 
+    fun hintColoring() {
+        for (polygon in polygons) {
+            for (i in 1..possibleColorCount) {
+                if (polygon.color == 0 && polygon.isUpdatingColorPossible(i)){
+                    polygon.updateColor(i)
+
+                    isGamePassed()
+                    return
+                }
+            }
+        }
+    }
+
+    private fun isGamePassed() {
+        for (polygon in polygons) {
+            if (polygon.color == 0)
+                return
+
+//            for (neighbor in polygon.neighbors) {
+//                if (neighbor.value.color == polygon.color)
+//                    return
+//            }
+        }
+
+        finishGame()
+    }
+
+    fun getPolygonByCords(cords: Pair<Int, Int>): Int {
+        // TBD
+        return -1
+    }
+
+    fun updatePolygonColor(cords: Pair<Int, Int>, newColor: Int) {
+        val id: Int = getPolygonByCords(cords)
+        if (id == -1)
+            return
+
+        if (!polygons[id].isUpdatingColorPossible(newColor)) {
+            return
+        }
+
+        polygons[id].updateColor(newColor)
+        isGamePassed()
+        return
+    }
+
+    private fun finishGame() {
+        // TBD
+        println("YOU FINISHED GAME!")
+        return
+    }
+
+    private fun colorRandomPolygon(colorNumber: Int) {
+        while (true) {
+            val randomPolygonId: Int = Random.nextInt(polygons.size)
+
+            if (!polygons[randomPolygonId].isUpdatingColorPossible(colorNumber)) {
+                continue
+            }
+
+            polygons[randomPolygonId].updateColor(colorNumber)
+            polygons[randomPolygonId].changeableColor = false
+            break
+        }
+    }
+
     private fun generateSquares(): MutableList<Square> {
         val squares = mutableListOf<Square>()
 
@@ -128,9 +194,8 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
                         id = x + 10*y,
                         xRelative = x,
                         yRelative = y
+                    )
                 )
-                )
-
             }
         }
 
