@@ -61,14 +61,11 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
             isPaused = true
         },
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
+        if (isPaused) {
             Box(
                 modifier = Modifier
-                    .background(color = Color.White)
-                    .border(BorderStroke(1.dp, Color.Black))
+                    .fillMaxSize()
+                    .background(commonBackgroundColor)
             ) {
                 ColoringMap(
                     selectedColor,
