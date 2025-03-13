@@ -99,16 +99,23 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
         return polygons
     }
 
+    fun createMap(polygonCount: Int, colorCount: Int) {
+        generateGridMap(polygonCount, colorCount)
+    }
+
     private fun generateGridMap(polygonCount: Int, colorCount: Int) {
         val squares = generateSquares()
-
         val polygonsList = initPolygons(squares)
 
         groupPolygons(polygonCount, polygonsList)
-
         generateBorders(polygonsList)
 
         polygons = polygonsList
+        possibleColorCount = colorCount
+
+        for (i in 1..possibleColorCount) {
+            colorRandomPolygon(i)
+        }
     }
 
     private fun generateSquares(): MutableList<Square> {
