@@ -198,10 +198,10 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier, mapPolygons
 }
 
 
-fun getColorCount(difficulty: String): Int? {
+fun getColorCount(difficulty: String): Int {
     return mapOf(
         "Hard" to 4,
         "Medium" to 5,
         "Easy" to 6
-    )[difficulty]
+    ).getValue(difficulty)
 }
