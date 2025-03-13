@@ -9,12 +9,14 @@ data class Square(
 )
 
 data class Polygon(
+    var id: Int,
     var squares: List<Square>,
     var color: Int = 0,
-//    val neighbors: Set<Polygon>,
+    var neighbors: Map<Int, Polygon> = mutableMapOf(),
     var border: List<List<Pair<Int, Int>>> = listOf()
 ) {
-    init {
+
+    fun updateBorder() {
         val squareIdSet = mutableSetOf<Int>()
 
         for (square in squares){
@@ -31,7 +33,7 @@ data class Polygon(
                     listOf(
                         Pair(square.xRelative, square.yRelative),
                         Pair(square.xRelative, square.yRelative + 1),
-                        )
+                    )
                 )
             }
 
@@ -69,6 +71,8 @@ data class Polygon(
     fun updateColor(newColor: Int) {
         color = newColor
     }
+
+
 }
 
 class MapPolygons(polygonCount: Int, colorCount: Int) {
@@ -83,38 +87,15 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
     }
 
     private fun generateGridMap(polygonCount: Int, colorCount: Int) {
-        var squares = generateSquares()
-        var squaresGroups: MutableList<List<Square>> = mutableListOf()
+        val squares = generateSquares()
 
-        var randomIndices: List<Int> = (0..99)
-            .filter { it !in 0..10 && it !in 90..100 && it % 10 != 0 && it % 10 != 9 }
-            .shuffled()
+        val polygonsList = initPolygons(squares)
 
-        val directions: List<Int> = listOf(-1, 1, 10, -10)
+        groupPolygons(polygonCount, polygonsList)
 
-        for (i in 0 .. (100 - polygonCount)){
-            val randomIndex = randomIndices.last()
-            randomIndices = randomIndices.dropLast(1).toMutableList()
-            val direction = directions.random()
+        generateBorders(polygonsList)
 
-            println(randomIndex)
-            println(direction)
-
-            val square1 = squares.find { it.id == randomIndex }
-            val square2 = squares.find { it.id == randomIndex + direction }
-
-            if (square1 != null && square2 != null) {
-                println(square1.id)
-                println(square2.id)
-                squares.removeIf { it.id == randomIndex }
-                squares.removeIf { it.id == randomIndex + direction }
-                squaresGroups.add(mutableListOf(square1, square2))
-            }
-        }
-
-        val combinedSquares = squaresGroups + squares.map { listOf(it) }
-        polygons = polygonsFromSquareGroups(combinedSquares)
-
+        polygons = polygonsList
     }
 
     private fun generateSquares(): MutableList<Square> {
@@ -136,19 +117,36 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
         return squares
     }
 
-    private fun polygonsFromSquareGroups(squares: List<List<Square>>): List<Polygon> {
-        val polygons = mutableListOf<Polygon>()
-
-        for (squareSet in squares) {
-            squareSet.forEach { square ->
-                println("Square ID: ${square.id}, x: ${square.xRelative}, y: ${square.yRelative}")
-            }
-            println("_____________")
-            polygons.add(
-                Polygon(squareSet)
+    private fun initPolygons(squares: List<Square>): List<Polygon>{
+        val polygonsMap = mutableMapOf<Int, Polygon>()
+        for (square in squares) {
+            polygonsMap[square.id] = Polygon(
+                    id = square.id,
+                    squares = mutableListOf(square)
             )
         }
 
-        return polygons
+        polygonsMap.forEach{entry ->
+            val neighbors = mutableMapOf<Int, Polygon>()
+
+            val iterations = listOf(-1, 1, -10, 10)
+            for (iteration in iterations) {
+                if (entry.value.id + iteration in 0..99) {
+                    neighbors[entry.value.id + iteration] = polygonsMap.getValue(entry.value.id + iteration)
+                }
+            }
+
+            entry.value.neighbors = neighbors
+        }
+
+        return  polygonsMap.values.toMutableList()
+    }
+
+    private fun groupPolygons(resultPolygonCount: Int, polygons: List<Polygon>) {
+
+    }
+
+    private fun generateBorders(polygons: List<Polygon>) {
+        polygons.forEach { polygon -> polygon.updateBorder() }
     }
 }
