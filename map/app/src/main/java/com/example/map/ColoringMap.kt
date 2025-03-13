@@ -164,12 +164,10 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier, mapPolygons
             }
     ) {
 
-
         val mapSizePx = with(density) { 350.dp.toPx() }
         val squareLen = mapSizePx/10
 
         for (polygon in mapPolygons.getPolygons()) {
-//            val polygonColor = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
             for (square in polygon.squares) {
                 drawRect(
                     color = gameColorsMap[polygon.color] ?: commonWhite,
