@@ -1,5 +1,4 @@
 package com.example.map
-import androidx.compose.ui.graphics.Color
 import kotlin.random.Random
 
 data class Square(
@@ -13,7 +12,8 @@ data class Polygon(
     var squares: List<Square>,
     var color: Int = 0,
     var neighbors: MutableMap<Int, Polygon> = mutableMapOf(),
-    var border: List<List<Pair<Int, Int>>> = listOf()
+    var border: List<List<Pair<Int, Int>>> = listOf(),
+    var changeableColor: Boolean = true
 ) {
 
     fun updateBorder() {
