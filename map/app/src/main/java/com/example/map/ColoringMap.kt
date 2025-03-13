@@ -35,7 +35,7 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
     var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
-    var mapPolygons = remember { MapPolygons(75, 4) }
+    var mapPolygons = remember { MapPolygons(15, 4) }
 
 
     LaunchedEffect(isPaused) {
