@@ -26,12 +26,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.map.SettingsDataStore.getSelectedPolygon
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 
 @Composable
 fun ColoringScreen(navController: NavHostController, difficulty: String, context: Context) {
+    var polygonCount: Int
+    var mapPolygons: MapPolygons = remember { MapPolygons() }
+    LaunchedEffect(Unit) {
+        polygonCount = getSelectedPolygon(context)
+        mapPolygons.createMap(polygonCount, getColorCount(difficulty))
+    }
+
     var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
