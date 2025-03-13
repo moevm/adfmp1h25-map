@@ -67,29 +67,15 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                     .fillMaxSize()
                     .background(commonBackgroundColor)
             ) {
-                ColoringMap(
-                    selectedColor,
+                Column(
                     modifier = Modifier
-                        .align(Alignment.Center),
-                    mapPolygons
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                RoundButton(
-                    imageResId = R.drawable.bulb_icon,
-                    buttonColor = Color.Yellow,
-                    onClick = { }
-                )
-                RoundButton(
-                    imageResId = R.drawable.brush_icon,
-                    buttonColor = selectedColor,
-                    onClick = { }
-                )
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.Center),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CommonButton("Resume", commonGrayColor, onClick = { isPaused = false })
+                    CommonButton("Menu", commonGrayColor, onClick = { navController.navigate("menu") })
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
