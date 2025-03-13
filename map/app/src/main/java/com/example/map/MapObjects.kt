@@ -68,19 +68,32 @@ data class Polygon(
         border = borders
     }
 
+    fun isUpdatingColorPossible(newColor: Int) : Boolean {
+        if (!changeableColor) {
+            return false
+        }
+
+        if (newColor == 0) {
+            return true
+        }
+
+        for (polygon in neighbors) {
+            if (polygon.value.color == newColor) {
+                return false
+            }
+        }
+
+        return true
+    }
+
     fun updateColor(newColor: Int) {
         color = newColor
     }
-
-
 }
 
-class MapPolygons(polygonCount: Int, colorCount: Int) {
+class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
     private var polygons: List<Polygon> = mutableListOf()
-
-    init {
-        generateGridMap(polygonCount, colorCount)
-    }
+    private var possibleColorCount: Int = colorCount
 
     fun getPolygons(): List<Polygon> {
         return polygons
