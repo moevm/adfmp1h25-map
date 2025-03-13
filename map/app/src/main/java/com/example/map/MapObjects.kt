@@ -12,7 +12,7 @@ data class Polygon(
     var id: Int,
     var squares: List<Square>,
     var color: Int = 0,
-    var neighbors: Map<Int, Polygon> = mutableMapOf(),
+    var neighbors: MutableMap<Int, Polygon> = mutableMapOf(),
     var border: List<List<Pair<Int, Int>>> = listOf()
 ) {
 
@@ -117,7 +117,7 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
         return squares
     }
 
-    private fun initPolygons(squares: List<Square>): List<Polygon>{
+    private fun initPolygons(squares: List<Square>): MutableList<Polygon>{
         val polygonsMap = mutableMapOf<Int, Polygon>()
         for (square in squares) {
             polygonsMap[square.id] = Polygon(
@@ -129,11 +129,19 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
         polygonsMap.forEach{entry ->
             val neighbors = mutableMapOf<Int, Polygon>()
 
-            val iterations = listOf(-1, 1, -10, 10)
+            val iterations = listOf(-10, 10)
             for (iteration in iterations) {
                 if (entry.value.id + iteration in 0..99) {
                     neighbors[entry.value.id + iteration] = polygonsMap.getValue(entry.value.id + iteration)
                 }
+            }
+
+            if (entry.value.id % 10 != 0) {
+                neighbors[entry.value.id - 1] = polygonsMap.getValue(entry.value.id - 1)
+            }
+
+            if (entry.value.id % 10 != 9) {
+                neighbors[entry.value.id + 1] = polygonsMap.getValue(entry.value.id + 1)
             }
 
             entry.value.neighbors = neighbors
@@ -142,8 +150,26 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
         return  polygonsMap.values.toMutableList()
     }
 
-    private fun groupPolygons(resultPolygonCount: Int, polygons: List<Polygon>) {
+    private fun groupPolygons(resultPolygonCount: Int, polygons: MutableList<Polygon>) {
+        while (polygons.size > resultPolygonCount) {
+            var polygon = polygons.removeAt(Random.nextInt(polygons.size))
 
+            for (neighbor in polygon.neighbors) {
+                neighbor.value.neighbors.remove(polygon.id)
+            }
+
+            val neighborsList = polygon.neighbors.values.toMutableList()
+            var selectedNeighbor = neighborsList.removeAt(Random.nextInt(neighborsList.size))
+
+            polygon.neighbors.remove(selectedNeighbor.id)
+
+            selectedNeighbor.neighbors += polygon.neighbors
+            selectedNeighbor.squares += polygon.squares
+
+            for (neighbor in selectedNeighbor.neighbors) {
+                neighbor.value.neighbors[selectedNeighbor.id] = selectedNeighbor
+            }
+        }
     }
 
     private fun generateBorders(polygons: List<Polygon>) {
