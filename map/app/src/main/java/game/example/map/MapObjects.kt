@@ -176,7 +176,7 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
             return
         }
 
-        polygons[id].updateColor(newColor)
+        polygon.updateColor(newColor)
         isGamePassed()
         return
     }
