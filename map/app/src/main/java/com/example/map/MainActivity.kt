@@ -30,9 +30,9 @@ fun MapColoringScreen(navController: NavHostController) {
     PageTemplate(
         header = "Map Coloring",
         pageDescription = "Choose level difficulty:",
-        buttonDescription = "Statistics",
+        buttonDescription = "About",
         buttonColor = commonGrayColor,
-        buttonAction = { navController.navigate("statistics") },
+        buttonAction = { navController.navigate("about") },
     ) {
         Column(){
             CommonButton("Easy", commonOrangeColor, onClick = {
@@ -45,10 +45,13 @@ fun MapColoringScreen(navController: NavHostController) {
                 navController.navigate("coloring/Hard")
             })
 
-            Spacer(modifier = Modifier.height(180.dp))
+            Spacer(modifier = Modifier.height(90.dp))
 
             CommonButton("Custom", commonGreenColor, onClick = {
                 navController.navigate("custom")
+            })
+            CommonButton("Statistics", commonGrayColor, onClick = {
+                navController.navigate("statistics")
             })
         }
     }
@@ -72,5 +75,6 @@ fun AppNavigation() {
         }
         composable("custom") { CustomScreen(navController, context) }
         composable("statistics") { StatisticsScreen(navController, context) }
+        composable("about") { AboutScreen(navController, context) }
     }
 }
