@@ -172,10 +172,17 @@ fun RoundButton(imageResId: Int, buttonColor: Color, onClick: () -> Unit, border
 }
 
 @Composable
-fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier, mapPolygons: MapPolygons) {
+fun ColoringMap(
+    modifier: Modifier = Modifier,
+    mapPolygons: MapPolygons,
+    painter: Painter,
+    toogle: () -> Unit,
+) {
     var regionColors by remember { mutableStateOf(List(10) { Color.White }) }
 
     val density = LocalDensity.current
+    val mapSizePx = with(density) { 350.dp.toPx() }
+    val squareLen = mapSizePx/10
 
     Canvas(
         modifier = modifier
