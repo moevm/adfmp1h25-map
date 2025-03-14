@@ -100,10 +100,13 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                         .border(BorderStroke(1.dp, Color.Black))
                 ) {
                     ColoringMap(
-                        selectedColor,
                         modifier = Modifier
                             .align(Alignment.Center),
-                        mapPolygons
+                        mapPolygons,
+                        painter,
+                        toogle = {
+                            updated = !updated
+                        }
                     )
                 }
 
