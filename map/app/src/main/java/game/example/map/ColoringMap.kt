@@ -45,11 +45,18 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
         mapPolygons.createMap(polygonCount, getColorCount(difficulty))
     }
 
-    var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isPaused) {
+    val painter by remember { mutableStateOf(Painter()) }
+    var updated by remember { mutableStateOf(false) }
+
+    val borderMap = mapOf(
+        Pair(true, 10.dp),
+        Pair(false, 1.dp)
+    )
+
+    LaunchedEffect(isPaused, updated) {
         while (!isPaused) {
             delay(1000L)
             time++
