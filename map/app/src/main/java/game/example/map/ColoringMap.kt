@@ -118,6 +118,7 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                     RoundButton(
                         imageResId = R.drawable.bulb_icon,
                         buttonColor = Color.Yellow,
+                        borderStroke = BorderStroke(1.dp, Color.Black),
                         onClick = {
                             mapPolygons.hintColoring()
                             time += 10
@@ -125,8 +126,15 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                     )
                     RoundButton(
                         imageResId = R.drawable.brush_icon,
-                        buttonColor = selectedColor,
-                        onClick = { }
+                        buttonColor = gameColorsMap.getValue(painter.currentColor),
+                        borderStroke = BorderStroke(
+                            borderMap.getValue(painter.isGettingColor),
+                            color = Color.Black
+                        ),
+                        onClick = {
+                            painter.isGettingColor = !painter.isGettingColor
+                            updated = !updated
+                        }
                     )
                 }
 
