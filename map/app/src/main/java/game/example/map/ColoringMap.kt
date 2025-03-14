@@ -212,9 +212,6 @@ fun ColoringMap(
             }
     ) {
 
-        val mapSizePx = with(density) { 350.dp.toPx() }
-        val squareLen = mapSizePx/10
-
         for (polygon in mapPolygons.getPolygons()) {
             for (square in polygon.squares) {
                 drawRect(
