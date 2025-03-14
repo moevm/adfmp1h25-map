@@ -181,6 +181,12 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
         return
     }
 
+    fun getPolygonColor(cords: Pair<Int, Int>): Int {
+        val polygon = getPolygonByCords(cords)
+
+        return polygon.color
+    }
+
     private fun finishGame() {
         // TBD
         println("YOU FINISHED GAME!")
