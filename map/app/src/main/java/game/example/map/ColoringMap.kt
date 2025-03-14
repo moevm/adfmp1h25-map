@@ -189,8 +189,26 @@ fun ColoringMap(
             .width(350.dp)
             .height(350.dp)
             .background(Color.White)
-            .clickable {
-                regionColors = regionColors.map { selectedColor }
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    val x = floor(offset.x / squareLen).toInt()
+                    val y = floor(offset.y / squareLen).toInt()
+
+                    if (painter.isGettingColor) {
+                        val color = mapPolygons.getPolygonColor(
+                            Pair(x,y)
+                        )
+
+                        painter.currentColor = color
+                        painter.isGettingColor = false
+                    }else {
+                        mapPolygons.updatePolygonColor(
+                            Pair(x,y),
+                            painter.currentColor
+                        )
+                    }
+                    toogle()
+                }
             }
     ) {
 
