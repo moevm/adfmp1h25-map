@@ -94,6 +94,13 @@ data class Polygon(
     fun updateColor(newColor: Int) {
         color = newColor
     }
+
+    fun hasSquareOnCoordinates(x: Int, y: Int): Boolean {
+        for (square in squares) {
+            if (square.xRelative == x && square.yRelative == y) return true
+        }
+        return false
+    }
 }
 
 class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
