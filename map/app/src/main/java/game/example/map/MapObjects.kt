@@ -1,4 +1,4 @@
-package com.example.map
+package game.example.map
 import kotlin.random.Random
 
 data class Square(

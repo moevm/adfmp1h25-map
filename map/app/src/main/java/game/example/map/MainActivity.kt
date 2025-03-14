@@ -1,4 +1,4 @@
-package com.example.map
+package game.example.map
 
 import android.content.Context
 import android.os.Bundle

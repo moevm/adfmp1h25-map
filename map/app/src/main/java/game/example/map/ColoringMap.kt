@@ -1,4 +1,4 @@
-package com.example.map
+package game.example.map
 
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
@@ -26,7 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.map.SettingsDataStore.getSelectedPolygon
+import com.example.map.R
+import game.example.map.SettingsDataStore.getSelectedPolygon
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
