@@ -157,9 +157,16 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
         finishGame()
     }
 
-    fun getPolygonByCords(cords: Pair<Int, Int>): Int {
-        // TBD
-        return -1
+    fun getPolygonByCords(coords: Pair<Int, Int>): Polygon {
+        for (polygon in polygons) {
+            if (polygon.hasSquareOnCoordinates(coords.first, coords.second))
+                return polygon
+        }
+
+        return Polygon(
+            -1,
+            squares = listOf()
+        )
     }
 
     fun updatePolygonColor(cords: Pair<Int, Int>, newColor: Int) {
