@@ -154,14 +154,14 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
 }
 
 @Composable
-fun RoundButton(imageResId: Int, buttonColor: Color, onClick: () -> Unit) {
+fun RoundButton(imageResId: Int, buttonColor: Color, onClick: () -> Unit, borderStroke: BorderStroke) {
     Button(
         onClick = onClick,
         shape = CircleShape,
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
         modifier = Modifier
             .size(80.dp)
-            .border(BorderStroke(1.dp, Color.Black), CircleShape)
+            .border(borderStroke, CircleShape)
     ) {
         Image(
             painter = painterResource(id = imageResId),
