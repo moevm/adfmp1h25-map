@@ -26,17 +26,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.map.SettingsDataStore.getSelectedPolygon
 import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 
 @Composable
 fun ColoringScreen(navController: NavHostController, difficulty: String, context: Context) {
+    var polygonCount: Int
+    var mapPolygons: MapPolygons = remember { MapPolygons() }
+    LaunchedEffect(Unit) {
+        polygonCount = getSelectedPolygon(context)
+        mapPolygons.createMap(polygonCount, getColorCount(difficulty))
+    }
+
     var selectedColor by remember { mutableStateOf(gameGreenColor) }
     var time by remember { mutableIntStateOf(0) }
     var isPaused by remember { mutableStateOf(false) }
-    var mapPolygons = remember { MapPolygons(15, 4) }
-
 
     LaunchedEffect(isPaused) {
         while (!isPaused) {
@@ -55,58 +61,11 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
             isPaused = true
         },
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier
-                    .background(color = Color.White)
-                    .border(BorderStroke(1.dp, Color.Black))
-            ) {
-                ColoringMap(
-                    selectedColor,
-                    modifier = Modifier
-                        .align(Alignment.Center),
-                    mapPolygons
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                RoundButton(
-                    imageResId = R.drawable.bulb_icon,
-                    buttonColor = Color.Yellow,
-                    onClick = { }
-                )
-                RoundButton(
-                    imageResId = R.drawable.brush_icon,
-                    buttonColor = selectedColor,
-                    onClick = { }
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "%02d:%02d".format(time / 60, time % 60),
-                fontSize = 30.sp,
-                style = TextStyle(
-                    fontFamily = JuraFontFamily,
-                    fontWeight = FontWeight.Bold,
-                )
-            )
-        }
-
         if (isPaused) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(commonBackgroundColor)
-                    .clickable { }
             ) {
                 Column(
                     modifier = Modifier
@@ -117,6 +76,55 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                     CommonButton("Resume", commonGrayColor, onClick = { isPaused = false })
                     CommonButton("Menu", commonGrayColor, onClick = { navController.navigate("menu") })
                 }
+            }
+        } else {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier
+                        .background(color = Color.White)
+                        .border(BorderStroke(1.dp, Color.Black))
+                ) {
+                    ColoringMap(
+                        selectedColor,
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        mapPolygons
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    RoundButton(
+                        imageResId = R.drawable.bulb_icon,
+                        buttonColor = Color.Yellow,
+                        onClick = {
+                            mapPolygons.hintColoring()
+                            time += 10
+                        }
+                    )
+                    RoundButton(
+                        imageResId = R.drawable.brush_icon,
+                        buttonColor = selectedColor,
+                        onClick = { }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "%02d:%02d".format(time / 60, time % 60),
+                    fontSize = 30.sp,
+                    style = TextStyle(
+                        fontFamily = JuraFontFamily,
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
             }
         }
     }
@@ -156,12 +164,10 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier, mapPolygons
             }
     ) {
 
-
         val mapSizePx = with(density) { 350.dp.toPx() }
         val squareLen = mapSizePx/10
 
         for (polygon in mapPolygons.getPolygons()) {
-//            val polygonColor = Color(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
             for (square in polygon.squares) {
                 drawRect(
                     color = gameColorsMap[polygon.color] ?: commonWhite,
@@ -192,10 +198,10 @@ fun ColoringMap(selectedColor: Color, modifier: Modifier = Modifier, mapPolygons
 }
 
 
-fun getColorCount(difficulty: String): Int? {
+fun getColorCount(difficulty: String): Int {
     return mapOf(
         "Hard" to 4,
         "Medium" to 5,
         "Easy" to 6
-    )[difficulty]
+    ).getValue(difficulty)
 }

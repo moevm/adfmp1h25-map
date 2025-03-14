@@ -1,5 +1,4 @@
 package com.example.map
-import androidx.compose.ui.graphics.Color
 import kotlin.random.Random
 
 data class Square(
@@ -13,7 +12,8 @@ data class Polygon(
     var squares: List<Square>,
     var color: Int = 0,
     var neighbors: MutableMap<Int, Polygon> = mutableMapOf(),
-    var border: List<List<Pair<Int, Int>>> = listOf()
+    var border: List<List<Pair<Int, Int>>> = listOf(),
+    var changeableColor: Boolean = true
 ) {
 
     fun updateBorder() {
@@ -68,34 +68,120 @@ data class Polygon(
         border = borders
     }
 
+    fun isUpdatingColorPossible(newColor: Int) : Boolean {
+        if (!changeableColor) {
+            return false
+        }
+
+        if (newColor == 0) {
+            return true
+        }
+
+        for (polygon in neighbors) {
+            if (polygon.value.color == newColor) {
+                return false
+            }
+        }
+
+        return true
+    }
+
     fun updateColor(newColor: Int) {
         color = newColor
     }
-
-
 }
 
-class MapPolygons(polygonCount: Int, colorCount: Int) {
+class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
     private var polygons: List<Polygon> = mutableListOf()
-
-    init {
-        generateGridMap(polygonCount, colorCount)
-    }
+    private var possibleColorCount: Int = colorCount
 
     fun getPolygons(): List<Polygon> {
         return polygons
     }
 
+    fun createMap(polygonCount: Int, colorCount: Int) {
+        generateGridMap(polygonCount, colorCount)
+    }
+
     private fun generateGridMap(polygonCount: Int, colorCount: Int) {
         val squares = generateSquares()
-
         val polygonsList = initPolygons(squares)
 
         groupPolygons(polygonCount, polygonsList)
-
         generateBorders(polygonsList)
 
         polygons = polygonsList
+        possibleColorCount = colorCount
+
+        for (i in 1..possibleColorCount) {
+            colorRandomPolygon(i)
+        }
+    }
+
+    fun hintColoring() {
+        for (polygon in polygons) {
+            for (i in 1..possibleColorCount) {
+                if (polygon.color == 0 && polygon.isUpdatingColorPossible(i)){
+                    polygon.updateColor(i)
+
+                    isGamePassed()
+                    return
+                }
+            }
+        }
+    }
+
+    private fun isGamePassed() {
+        for (polygon in polygons) {
+            if (polygon.color == 0)
+                return
+
+//            for (neighbor in polygon.neighbors) {
+//                if (neighbor.value.color == polygon.color)
+//                    return
+//            }
+        }
+
+        finishGame()
+    }
+
+    fun getPolygonByCords(cords: Pair<Int, Int>): Int {
+        // TBD
+        return -1
+    }
+
+    fun updatePolygonColor(cords: Pair<Int, Int>, newColor: Int) {
+        val id: Int = getPolygonByCords(cords)
+        if (id == -1)
+            return
+
+        if (!polygons[id].isUpdatingColorPossible(newColor)) {
+            return
+        }
+
+        polygons[id].updateColor(newColor)
+        isGamePassed()
+        return
+    }
+
+    private fun finishGame() {
+        // TBD
+        println("YOU FINISHED GAME!")
+        return
+    }
+
+    private fun colorRandomPolygon(colorNumber: Int) {
+        while (true) {
+            val randomPolygonId: Int = Random.nextInt(polygons.size)
+
+            if (!polygons[randomPolygonId].isUpdatingColorPossible(colorNumber)) {
+                continue
+            }
+
+            polygons[randomPolygonId].updateColor(colorNumber)
+            polygons[randomPolygonId].changeableColor = false
+            break
+        }
     }
 
     private fun generateSquares(): MutableList<Square> {
@@ -108,9 +194,8 @@ class MapPolygons(polygonCount: Int, colorCount: Int) {
                         id = x + 10*y,
                         xRelative = x,
                         yRelative = y
+                    )
                 )
-                )
-
             }
         }
 
