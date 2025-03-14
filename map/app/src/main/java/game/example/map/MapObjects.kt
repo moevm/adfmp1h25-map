@@ -7,6 +7,11 @@ data class Square(
     var yRelative: Int
 )
 
+data class Painter(
+    var isGettingColor: Boolean = false,
+    var currentColor: Int = 0
+)
+
 data class Polygon(
     var id: Int,
     var squares: List<Square>,
