@@ -170,9 +170,7 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
     }
 
     fun updatePolygonColor(cords: Pair<Int, Int>, newColor: Int) {
-        val id: Int = getPolygonByCords(cords)
-        if (id == -1)
-            return
+        val polygon = getPolygonByCords(cords)
 
         if (!polygons[id].isUpdatingColorPossible(newColor)) {
             return
