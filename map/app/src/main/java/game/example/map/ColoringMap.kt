@@ -30,7 +30,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.map.R
 import game.example.map.SettingsDataStore.getSelectedPolygon
+import game.example.map.StatisticsDataStore.updateStatistics
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.random.Random
@@ -50,6 +54,7 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
 
     val painter by remember { mutableStateOf(Painter()) }
     var updated by remember { mutableStateOf(false) }
+    var finished by remember { mutableStateOf(false) }
 
     val borderMap = mapOf(
         Pair(true, 10.dp),
@@ -57,39 +62,34 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
     )
 
     LaunchedEffect(isPaused, updated) {
-        while (!isPaused) {
+        while (!isPaused && !finished) {
             delay(1000L)
             time++
+            finished = mapPolygons.isGamePassed()
+
+            CoroutineScope(Dispatchers.IO).launch{
+                if (finished) {
+                    updateStatistics(context, difficulty, time)
+                }
+            }
+
         }
     }
 
-    PageTemplate(
-        header = difficulty,
-        pageDescription = "${getColorCount(difficulty)} colors",
-        buttonDescription = "Pause",
-        buttonColor = commonGreenColor,
-        visibleButton = !isPaused,
-        buttonAction = {
-            isPaused = true
-        },
-    ) {
-        if (isPaused) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(commonBackgroundColor)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CommonButton("Resume", commonGrayColor, onClick = { isPaused = false })
-                    CommonButton("Menu", commonGrayColor, onClick = { navController.navigate("menu") })
-                }
-            }
-        } else {
+
+
+    if (finished) {
+        isPaused = true
+        PageTemplate(
+            header = "You win!",
+            pageDescription = "Congratulations",
+            buttonDescription = "Menu",
+            buttonColor = commonGrayColor,
+            visibleButton = true,
+            buttonAction = {
+                navController.navigate("menu")
+            },
+        ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize()
@@ -140,8 +140,13 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                val hours: Int = time / 3600
+                val minutes: Int = (time - hours * 3600) / 60
+                val seconds: Int = time % 60
+                val timeStr: String = "%02d:%02d:%02d".format(hours, minutes, seconds)
+
                 Text(
-                    text = "%02d:%02d".format(time / 60, time % 60),
+                    text = timeStr,
                     fontSize = 30.sp,
                     style = TextStyle(
                         fontFamily = JuraFontFamily,
@@ -150,11 +155,113 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                 )
             }
         }
+    } else {
+        PageTemplate(
+            header = difficulty,
+            pageDescription = "${getColorCount(difficulty)} colors",
+            buttonDescription = "Pause",
+            buttonColor = commonGreenColor,
+            visibleButton = !isPaused,
+            buttonAction = {
+                isPaused = true
+            },
+        ) {
+            if (isPaused) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(commonBackgroundColor)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CommonButton("Resume", commonGrayColor, onClick = { isPaused = false })
+                        CommonButton(
+                            "Menu",
+                            commonGrayColor,
+                            onClick = { navController.navigate("menu") })
+                    }
+                }
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .background(color = Color.White)
+                            .border(BorderStroke(1.dp, Color.Black))
+                    ) {
+                        ColoringMap(
+                            modifier = Modifier
+                                .align(Alignment.Center),
+                            mapPolygons,
+                            painter,
+                            toogle = {
+                                updated = !updated
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        RoundButton(
+                            imageResId = R.drawable.bulb_icon,
+                            buttonColor = Color.Yellow,
+                            borderStroke = BorderStroke(1.dp, Color.Black),
+                            onClick = {
+                                mapPolygons.hintColoring()
+                                time += 10
+                            }
+                        )
+                        RoundButton(
+                            imageResId = R.drawable.brush_icon,
+                            buttonColor = gameColorsMap.getValue(painter.currentColor),
+                            borderStroke = BorderStroke(
+                                borderMap.getValue(painter.isGettingColor),
+                                color = Color.Black
+                            ),
+                            onClick = {
+                                painter.isGettingColor = !painter.isGettingColor
+                                updated = !updated
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    val hours: Int = time / 3600
+                    val minutes: Int = (time - hours * 3600) / 60
+                    val seconds: Int = time % 60
+                    val timeStr: String = "%02d:%02d:%02d".format(hours, minutes, seconds)
+
+                    Text(
+                        text = timeStr,
+                        fontSize = 30.sp,
+                        style = TextStyle(
+                            fontFamily = JuraFontFamily,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun RoundButton(imageResId: Int, buttonColor: Color, onClick: () -> Unit, borderStroke: BorderStroke) {
+fun RoundButton(
+    imageResId: Int,
+    buttonColor: Color,
+    onClick: () -> Unit,
+    borderStroke: BorderStroke
+) {
     Button(
         onClick = onClick,
         shape = CircleShape,
@@ -182,7 +289,7 @@ fun ColoringMap(
 
     val density = LocalDensity.current
     val mapSizePx = with(density) { 350.dp.toPx() }
-    val squareLen = mapSizePx/10
+    val squareLen = mapSizePx / 10
 
     Canvas(
         modifier = modifier
@@ -196,14 +303,14 @@ fun ColoringMap(
 
                     if (painter.isGettingColor) {
                         val color = mapPolygons.getPolygonColor(
-                            Pair(x,y)
+                            Pair(x, y)
                         )
 
                         painter.currentColor = color
                         painter.isGettingColor = false
-                    }else {
+                    } else {
                         mapPolygons.updatePolygonColor(
-                            Pair(x,y),
+                            Pair(x, y),
                             painter.currentColor
                         )
                     }
@@ -216,7 +323,7 @@ fun ColoringMap(
             for (square in polygon.squares) {
                 drawRect(
                     color = gameColorsMap[polygon.color] ?: commonWhite,
-                    size = Size( width = squareLen, height = squareLen),
+                    size = Size(width = squareLen, height = squareLen),
                     topLeft = Offset(
                         squareLen * square.xRelative,
                         squareLen * square.yRelative
