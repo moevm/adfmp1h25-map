@@ -28,25 +28,50 @@ object StatisticsDataStore {
         }.first()
     }
 
-    suspend fun updateStatistics(context: Context, difficulty: String, time: String) {
+    suspend fun updateStatistics(context: Context, difficulty: String, time: Int) {
+        val hours: Int = time / 3600
+        val minutes: Int = (time - hours * 3600) / 60
+        val seconds: Int = time % 60
+        val timeStr: String = "%02d:%02d:%02d".format(hours, minutes, seconds)
+        println(difficulty)
+        println(difficulty == "Easy")
+
         context.dataStore.edit { settings ->
-            when (difficulty) {
-                "Easy" -> {
-                    settings[EASY_SOLVED] = (settings[EASY_SOLVED] ?: 0) + 1
-                    val bestTime = settings[EASY_BEST_TIME] ?: time
-                    if (bestTime == "00:00:00" || bestTime > time) settings[EASY_BEST_TIME] = time
-                }
-                "Medium" -> {
-                    settings[MEDIUM_SOLVED] = (settings[MEDIUM_SOLVED] ?: 0) + 1
-                    val bestTime = settings[MEDIUM_BEST_TIME] ?: time
-                    if (bestTime == "00:00:00" || bestTime > time) settings[MEDIUM_BEST_TIME] = time
-                }
-                "Hard" -> {
-                    settings[HARD_SOLVED] = (settings[HARD_SOLVED] ?: 0) + 1
-                    val bestTime = settings[HARD_BEST_TIME] ?: time
-                    if (bestTime == "00:00:00" || bestTime > time) settings[HARD_BEST_TIME] = time
-                }
+            if (difficulty == "Easy") {
+                settings[EASY_SOLVED] = (settings[EASY_SOLVED] ?: 0) + 1
+                val bestTime = settings[EASY_BEST_TIME] ?: timeStr
+                println(bestTime)
+                println(timeStr)
+                println(bestTime > timeStr)
+                if (bestTime == "00:00:00" || bestTime >= timeStr)
+                    settings[EASY_BEST_TIME] = timeStr
             }
+            if (difficulty == "Medium") {
+                settings[MEDIUM_SOLVED] = (settings[MEDIUM_SOLVED] ?: 0) + 1
+                val bestTime = settings[MEDIUM_BEST_TIME] ?: timeStr
+                if (bestTime == "00:00:00" || bestTime >= timeStr)
+                    settings[MEDIUM_BEST_TIME] = timeStr
+            }
+
+
+            if (difficulty == "Hard") {
+                settings[HARD_SOLVED] = (settings[HARD_SOLVED] ?: 0) + 1
+                val bestTime = settings[HARD_BEST_TIME] ?: timeStr
+                if (bestTime == "00:00:00" || bestTime >= timeStr)
+                    settings[HARD_BEST_TIME] = timeStr
+            }
+
+        }
+    }
+
+    suspend fun defaultStatistics(context: Context) {
+        context.dataStore.edit { settings ->
+            settings[EASY_SOLVED] = 0
+            settings[MEDIUM_SOLVED] = 0
+            settings[HARD_SOLVED] = 0
+            settings[EASY_BEST_TIME] = "00:00:00"
+            settings[MEDIUM_BEST_TIME] = "00:00:00"
+            settings[HARD_BEST_TIME] = "00:00:00"
         }
     }
 }
