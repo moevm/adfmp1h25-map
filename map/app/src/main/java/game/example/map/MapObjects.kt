@@ -143,18 +143,15 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
         }
     }
 
-    private fun isGamePassed() {
+    fun isGamePassed(): Boolean {
+        if (polygons.isEmpty())
+            return false
         for (polygon in polygons) {
             if (polygon.color == 0)
-                return
-
-//            for (neighbor in polygon.neighbors) {
-//                if (neighbor.value.color == polygon.color)
-//                    return
-//            }
+                return false
         }
 
-        finishGame()
+        return true
     }
 
     fun getPolygonByCords(coords: Pair<Int, Int>): Polygon {
