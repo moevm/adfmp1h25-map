@@ -19,7 +19,7 @@ object SettingsDataStore {
 
     suspend fun getSelectedPolygon(context: Context): Int {
         return context.dataStore.data
-            .map { it[SELECTED_POLYGON] ?: "10" }
+            .map { it[SELECTED_POLYGON] ?: "35" }
             .first()
             .toInt()
     }
