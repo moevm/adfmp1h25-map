@@ -135,8 +135,6 @@ class MapPolygons(polygonCount: Int = 0 , colorCount: Int = 0) {
             for (i in 1..possibleColorCount) {
                 if (polygon.color == 0 && polygon.isUpdatingColorPossible(i)){
                     polygon.updateColor(i)
-
-                    isGamePassed()
                     return
                 }
             }
