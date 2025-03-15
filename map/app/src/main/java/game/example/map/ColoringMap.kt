@@ -67,10 +67,11 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
             time++
             finished = mapPolygons.isGamePassed()
 
-            CoroutineScope(Dispatchers.IO).launch{
-                if (finished) {
+            if (finished) {
+                CoroutineScope(Dispatchers.IO).launch{
                     updateStatistics(context, difficulty, time)
                 }
+                break
             }
 
         }
