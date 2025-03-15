@@ -26,7 +26,7 @@ fun AboutScreen(navController: NavHostController, context: Context) {
         Box(
         ){
             Text(
-                "Students of ETU \"LETI\"\ngroup 1303:\n\nAndreeva Elizaveta:\nelizavetaa40@gmail.com\n\nButylo Egor:\negorbutylo@mail.ru\n\nDepreys Alexander:\nikighgg@gmail.com ",
+                "Students of ETU \"LETI\"\nGroup 1303:\n\nAndreeva Elizaveta:\nelizavetaa40@gmail.com\n\nButylo Egor:\negorbutylo@mail.ru\n\nDepreys Alexander:\nikighgg@gmail.com ",
                 fontSize = 20.sp,
                 modifier = Modifier.width(300.dp),
                 style = TextStyle(
