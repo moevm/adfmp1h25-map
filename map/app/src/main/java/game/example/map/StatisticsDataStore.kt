@@ -21,9 +21,9 @@ object StatisticsDataStore {
     suspend fun getStatistics(context: Context): Map<String, Pair<Int, String>> {
         return context.dataStore.data.map { settings ->
             mapOf(
-                "Easy" to Pair(settings[EASY_SOLVED] ?: 10, settings[EASY_BEST_TIME] ?: "00:02:41"),
-                "Medium" to Pair(settings[MEDIUM_SOLVED] ?: 6, settings[MEDIUM_BEST_TIME] ?: "00:08:31"),
-                "Hard" to Pair(settings[HARD_SOLVED] ?: 2, settings[HARD_BEST_TIME] ?: "00:10:12")
+                "Easy" to Pair(settings[EASY_SOLVED] ?: 0, settings[EASY_BEST_TIME] ?: "--:--:--"),
+                "Medium" to Pair(settings[MEDIUM_SOLVED] ?: 0, settings[MEDIUM_BEST_TIME] ?: "--:--:--"),
+                "Hard" to Pair(settings[HARD_SOLVED] ?: 0, settings[HARD_BEST_TIME] ?: "--:--:--")
             )
         }.first()
     }
@@ -40,16 +40,13 @@ object StatisticsDataStore {
             if (difficulty == "Easy") {
                 settings[EASY_SOLVED] = (settings[EASY_SOLVED] ?: 0) + 1
                 val bestTime = settings[EASY_BEST_TIME] ?: timeStr
-                println(bestTime)
-                println(timeStr)
-                println(bestTime > timeStr)
-                if (bestTime == "00:00:00" || bestTime >= timeStr)
+                if (bestTime == "--:--:--" || bestTime >= timeStr)
                     settings[EASY_BEST_TIME] = timeStr
             }
             if (difficulty == "Medium") {
                 settings[MEDIUM_SOLVED] = (settings[MEDIUM_SOLVED] ?: 0) + 1
                 val bestTime = settings[MEDIUM_BEST_TIME] ?: timeStr
-                if (bestTime == "00:00:00" || bestTime >= timeStr)
+                if (bestTime == "--:--:--" || bestTime >= timeStr)
                     settings[MEDIUM_BEST_TIME] = timeStr
             }
 
@@ -57,7 +54,7 @@ object StatisticsDataStore {
             if (difficulty == "Hard") {
                 settings[HARD_SOLVED] = (settings[HARD_SOLVED] ?: 0) + 1
                 val bestTime = settings[HARD_BEST_TIME] ?: timeStr
-                if (bestTime == "00:00:00" || bestTime >= timeStr)
+                if (bestTime == "--:--:--" || bestTime >= timeStr)
                     settings[HARD_BEST_TIME] = timeStr
             }
 

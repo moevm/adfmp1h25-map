@@ -1,6 +1,7 @@
 package game.example.map
 
 import android.content.Context
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -27,6 +28,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import com.example.map.R
 import game.example.map.SettingsDataStore.getSelectedPolygon
@@ -42,6 +46,8 @@ import kotlin.random.Random
 
 @Composable
 fun ColoringScreen(navController: NavHostController, difficulty: String, context: Context) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     var polygonCount: Int
     var mapPolygons: MapPolygons = remember { MapPolygons() }
     LaunchedEffect(Unit) {
@@ -77,7 +83,13 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
         }
     }
 
+    val lifecycleObserver = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_PAUSE) {
+            isPaused = true
+        }
+    }
 
+    lifecycleOwner.lifecycle.addObserver(lifecycleObserver)
 
     if (finished) {
         isPaused = true
@@ -194,7 +206,6 @@ fun ColoringScreen(navController: NavHostController, difficulty: String, context
                     Box(
                         modifier = Modifier
                             .background(color = Color.White)
-                            .border(BorderStroke(1.dp, Color.Black))
                     ) {
                         ColoringMap(
                             modifier = Modifier
@@ -286,7 +297,19 @@ fun ColoringMap(
     painter: Painter,
     toogle: () -> Unit,
 ) {
-    var regionColors by remember { mutableStateOf(List(10) { Color.White }) }
+    var canvasBorderColor by remember {mutableStateOf(Color.Black) }
+    var canvasBorderSize by remember { mutableStateOf(5.dp) }
+    suspend fun onBadInput(){
+        canvasBorderSize = 10.dp
+        canvasBorderColor = Color.Red
+        delay(500L)
+        canvasBorderSize = 5.dp
+        canvasBorderColor = Color.Black
+    }
+
+    val animatedColor by animateColorAsState(
+        targetValue = canvasBorderColor,
+    )
 
     val density = LocalDensity.current
     val mapSizePx = with(density) { 350.dp.toPx() }
@@ -297,7 +320,9 @@ fun ColoringMap(
             .width(350.dp)
             .height(350.dp)
             .background(Color.White)
-            .pointerInput(Unit) {
+            .border(width = canvasBorderSize, color = animatedColor)
+            .pointerInput(Unit)
+            {
                 detectTapGestures { offset ->
                     val x = floor(offset.x / squareLen).toInt()
                     val y = floor(offset.y / squareLen).toInt()
@@ -310,10 +335,16 @@ fun ColoringMap(
                         painter.currentColor = color
                         painter.isGettingColor = false
                     } else {
-                        mapPolygons.updatePolygonColor(
+                        val isSuccessful = mapPolygons.updatePolygonColor(
                             Pair(x, y),
                             painter.currentColor
                         )
+
+                        if (!isSuccessful) {
+                            CoroutineScope(Dispatchers.IO).launch{
+                                onBadInput()
+                            }
+                        }
                     }
                     toogle()
                 }

@@ -12,6 +12,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +41,12 @@ fun CustomScreen(navController: NavHostController, context: Context) {
     ) {
         Column {
             for (i in 0 until (count / 2)) {
-                Row {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally),
+                ) {
+
+
                     val value1 = polygonsList[i * 2]
                     val value2 = polygonsList[i * 2 + 1]
                     val isChosen1 = (value1 == currentConfigVal)
@@ -58,6 +65,20 @@ fun CustomScreen(navController: NavHostController, context: Context) {
                     }
                 }
             }
+
+            Text(
+                "* Amount of regions that need to be painted for level completion." ,
+                fontSize = 20.sp,
+                modifier = Modifier
+                    .offset(y = 30.dp)
+                    .align(Alignment.CenterHorizontally)
+                ,
+                style = TextStyle(
+                    fontFamily = JuraFontFamily,
+                    fontWeight = FontWeight.Bold,
+                ),
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
